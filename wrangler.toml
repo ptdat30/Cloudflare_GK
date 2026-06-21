@@ -1,0 +1,17 @@
+# Cloudflare Pages – Cấu hình KV Namespace Binding
+#
+# File này dùng để cấu hình khi deploy lên Cloudflare Pages.
+# Khi deploy thực tế, bạn cần vào Cloudflare Dashboard → Pages → Settings → 
+# Functions → KV namespace bindings và thêm binding tên "MESSAGES_KV".
+#
+# Để test LOCAL với Wrangler CLI, file này cho phép mô phỏng KV.
+# Chạy: npx wrangler pages dev . --kv MESSAGES_KV
+
+name = "chiec-hop-bi-mat"
+compatibility_date = "2024-01-01"
+
+# Khi test local, Wrangler sẽ tạo KV ảo với binding tên MESSAGES_KV
+# Khi deploy lên Cloudflare, bạn cần bind KV namespace thật trong Dashboard
+[[kv_namespaces]]
+binding = "MESSAGES_KV"
+id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"  # Thay bằng KV Namespace ID thật từ Cloudflare Dashboard
