@@ -101,6 +101,25 @@ async function handleGet(request, env) {
   }
 }
 
+// ---- POST /functions/clear ----
+async function handleClear(request, env) {
+  const headers = corsHeaders();
+  try {
+    // Ghi đè bằng mảng rỗng để xóa tất cả tin nhắn ngay lập tức
+    await env.MESSAGES_KV.put(MESSAGES_KEY, JSON.stringify([]));
+    return new Response(
+      JSON.stringify({ success: true }),
+      { status: 200, headers }
+    );
+  } catch (error) {
+    console.error("Lỗi handleClear:", error);
+    return new Response(
+      JSON.stringify({ success: false, error: "Lỗi khi xóa tin nhắn." }),
+      { status: 500, headers }
+    );
+  }
+}
+
 // ---- Export default Worker ----
 export default {
   async fetch(request, env, ctx) {
@@ -110,12 +129,13 @@ export default {
 
     // CORS preflight
     if (method === "OPTIONS" &&
-        (pathname === "/functions/send" || pathname === "/functions/get")) {
+        (pathname === "/functions/send" || pathname === "/functions/get" || pathname === "/functions/clear")) {
       return new Response(null, { status: 204, headers: corsHeaders() });
     }
 
     if (pathname === "/functions/send" && method === "POST") return handleSend(request, env);
     if (pathname === "/functions/get"  && method === "GET")  return handleGet(request, env);
+    if (pathname === "/functions/clear" && method === "POST") return handleClear(request, env);
 
     // Static assets
     return env.ASSETS.fetch(request);

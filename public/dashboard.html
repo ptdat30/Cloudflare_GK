@@ -441,7 +441,8 @@
               <button id="btn-toggle-qr" class="toggle-btn active" title="Ẩn/hiện QR (phím Q)">QR</button>
               <button id="btn-toggle-stats" class="toggle-btn active" title="Ẩn/hiện thống kê (phím S)">Stat</button>
               <button id="btn-toggle-voice" class="toggle-btn" title="Bật/Tắt AI Đọc (phím A)">🔈 Đọc</button>
-              <span class="text-dash-textMuted text-sm" id="last-updated">Đang tải...</span>
+              <button id="btn-clear-all" class="toggle-btn" style="background-color: rgba(239, 68, 68, 0.1); color: #f87171; border-color: rgba(239, 68, 68, 0.2);" title="Xóa tất cả tin nhắn hiện có">🗑️ Xóa hết</button>
+              <span class="text-dash-textMuted text-sm ml-2" id="last-updated">Đang tải...</span>
               <div class="count-badge" id="message-count">0</div>
             </div>
           </div>
@@ -765,6 +766,7 @@
       const btnToggleQr = document.getElementById("btn-toggle-qr");
       const btnToggleStats = document.getElementById("btn-toggle-stats");
       const btnToggleVoice = document.getElementById("btn-toggle-voice");
+      const btnClearAll = document.getElementById("btn-clear-all");
       const qrPanel = document.getElementById("qr-panel");
       const statsPanel = document.getElementById("stats-panel");
       const rightPanel = document.getElementById("right-panel");
@@ -822,10 +824,50 @@
         }
       }
 
+      async function clearAllMessages() {
+        if (!confirm("Bạn có chắc chắn muốn xóa TOÀN BỘ tin nhắn không? Hành động này không thể hoàn tác.")) {
+          return;
+        }
+
+        const originalText = btnClearAll.innerHTML;
+        btnClearAll.innerHTML = "⏳ Đang xóa...";
+        btnClearAll.disabled = true;
+
+        try {
+          const response = await fetch("/functions/clear", {
+            method: "POST"
+          });
+          
+          if (response.ok) {
+            // Xóa thành công trên server
+            messagesContainer.innerHTML = ""; // Xóa sạch giao diện hiện tại
+            displayedTimestamps.clear(); // Reset lịch sử
+            totalMessageCount = 0;
+            updateCountDisplay(0);
+            
+            // Xóa rỗng để hiện lại Empty State
+            const emptyState = document.getElementById("empty-state");
+            if (emptyState) {
+              messagesContainer.appendChild(emptyState);
+              emptyState.style.display = "flex";
+            }
+          } else {
+            alert("Lỗi khi xóa tin nhắn. Vui lòng thử lại.");
+          }
+        } catch (error) {
+          console.error("Lỗi clear API:", error);
+          alert("Lỗi mạng. Không thể kết nối tới máy chủ.");
+        } finally {
+          btnClearAll.innerHTML = originalText;
+          btnClearAll.disabled = false;
+        }
+      }
+
       // Xử lý nút bấm trên UI
       btnToggleQr.addEventListener("click", toggleQR);
       btnToggleStats.addEventListener("click", toggleStats);
       btnToggleVoice.addEventListener("click", toggleVoice);
+      if (btnClearAll) btnClearAll.addEventListener("click", clearAllMessages);
 
       // Xử lý phóng to QR
       qrWrapper.addEventListener("click", () => {
