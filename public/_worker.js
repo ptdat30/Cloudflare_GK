@@ -2,46 +2,45 @@
  * public/_worker.js
  * Cloudflare Pages Advanced Mode - Single Worker file
  *
- * File này xử lý TẤT CẢ requests:
- *   - POST /functions/send  → lưu tin nhắn vào KV
- *   - GET  /functions/get   → lấy tin nhắn từ KV
- *   - Tất cả còn lại        → serve static assets (index.html, dashboard.html, v.v.)
- *
- * Binding KV: MESSAGES_KV (cấu hình trong wrangler.toml hoặc Cloudflare Dashboard)
+ * KV Architecture: Lưu TẤT CẢ tin nhắn vào 1 key duy nhất "all_messages"
+ * → Tránh vấn đề KV list() eventual consistency (delay lên đến 60s)
+ * → Chỉ cần 1 KV.get() để đọc, 1 KV.get() + 1 KV.put() để ghi
  */
 
-// ---- Hàm tạo CORS headers dùng chung ----
-function corsHeaders(contentType = "application/json") {
+// Key duy nhất chứa toàn bộ tin nhắn dưới dạng JSON array
+const MESSAGES_KEY = "all_messages";
+const MAX_MESSAGES = 100; // Giữ tối đa 100 tin nhắn gần nhất
+
+// ---- CORS headers ----
+function corsHeaders() {
   return {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
-    "Content-Type": contentType,
+    "Content-Type": "application/json",
   };
 }
 
-// ---- Xử lý POST /functions/send: nhận tin nhắn và lưu vào KV ----
+// ---- POST /functions/send ----
 async function handleSend(request, env) {
   const headers = corsHeaders();
 
   try {
-    // Bước 1: Parse JSON body từ request
     let body;
     try {
       body = await request.json();
     } catch {
       return new Response(
-        JSON.stringify({ success: false, error: "Body phải là định dạng JSON hợp lệ." }),
+        JSON.stringify({ success: false, error: "Body phải là JSON hợp lệ." }),
         { status: 400, headers }
       );
     }
 
-    // Bước 2: Kiểm tra nội dung tin nhắn
     const content = (body.content || "").trim();
 
     if (!content) {
       return new Response(
-        JSON.stringify({ success: false, error: "Nội dung tin nhắn không được để trống." }),
+        JSON.stringify({ success: false, error: "Nội dung không được để trống." }),
         { status: 400, headers }
       );
     }
@@ -53,22 +52,25 @@ async function handleSend(request, env) {
       );
     }
 
-    // Bước 3: Tạo key và lưu vào KV với TTL 24 giờ
-    const timestamp = Date.now();
-    const key = `msg_${timestamp}`;
+    // Đọc danh sách tin nhắn hiện tại (1 KV.get())
+    const existing = await env.MESSAGES_KV.get(MESSAGES_KEY, { type: "json" }) || [];
 
-    const messageData = {
-      content: content,
-      timestamp: timestamp,
-      createdAt: new Date(timestamp).toISOString(),
+    // Thêm tin nhắn mới vào đầu danh sách
+    const newMessage = {
+      content,
+      timestamp: Date.now(),
+      createdAt: new Date().toISOString(),
     };
 
-    await env.MESSAGES_KV.put(key, JSON.stringify(messageData), {
+    const updated = [newMessage, ...existing].slice(0, MAX_MESSAGES);
+
+    // Ghi lại (1 KV.put())
+    await env.MESSAGES_KV.put(MESSAGES_KEY, JSON.stringify(updated), {
       expirationTtl: 86400, // Tự xóa sau 24 giờ
     });
 
     return new Response(
-      JSON.stringify({ success: true, key: key }),
+      JSON.stringify({ success: true }),
       { status: 201, headers }
     );
 
@@ -81,37 +83,13 @@ async function handleSend(request, env) {
   }
 }
 
-// ---- Xử lý GET /functions/get: lấy toàn bộ tin nhắn từ KV ----
+// ---- GET /functions/get ----
 async function handleGet(request, env) {
   const headers = corsHeaders();
 
   try {
-    // Bước 1: List tất cả keys có tiền tố "msg_"
-    const listResult = await env.MESSAGES_KV.list({ prefix: "msg_" });
-    const keys = listResult.keys;
-
-    if (!keys || keys.length === 0) {
-      return new Response(JSON.stringify([]), { status: 200, headers });
-    }
-
-    // Bước 2: Lấy giá trị song song, bỏ qua keys bị null
-    const messagePromises = keys.map(async (keyObj) => {
-      const rawValue = await env.MESSAGES_KV.get(keyObj.name);
-      if (rawValue === null) return null;
-      try {
-        return JSON.parse(rawValue);
-      } catch {
-        return null;
-      }
-    });
-
-    const rawMessages = await Promise.all(messagePromises);
-
-    // Bước 3: Lọc null, sắp xếp mới nhất lên đầu
-    const messages = rawMessages
-      .filter((msg) => msg !== null)
-      .sort((a, b) => b.timestamp - a.timestamp);
-
+    // Chỉ 1 KV.get() duy nhất — không cần list()
+    const messages = await env.MESSAGES_KV.get(MESSAGES_KEY, { type: "json" }) || [];
     return new Response(JSON.stringify(messages), { status: 200, headers });
 
   } catch (error) {
@@ -123,33 +101,23 @@ async function handleGet(request, env) {
   }
 }
 
-// ---- Export default: Entry point của Worker ----
+// ---- Export default Worker ----
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    const { pathname, method } = { pathname: url.pathname, method: request.method };
+    const { pathname } = url;
+    const method = request.method;
 
-    // Xử lý CORS Preflight (OPTIONS) cho cả 2 endpoints
+    // CORS preflight
     if (method === "OPTIONS" &&
         (pathname === "/functions/send" || pathname === "/functions/get")) {
-      return new Response(null, {
-        status: 204,
-        headers: corsHeaders(),
-      });
+      return new Response(null, { status: 204, headers: corsHeaders() });
     }
 
-    // Route: POST /functions/send
-    if (pathname === "/functions/send" && method === "POST") {
-      return handleSend(request, env);
-    }
+    if (pathname === "/functions/send" && method === "POST") return handleSend(request, env);
+    if (pathname === "/functions/get"  && method === "GET")  return handleGet(request, env);
 
-    // Route: GET /functions/get
-    if (pathname === "/functions/get" && method === "GET") {
-      return handleGet(request, env);
-    }
-
-    // Tất cả routes còn lại: phục vụ static assets (index.html, dashboard.html, v.v.)
-    // env.ASSETS là binding tự động của Cloudflare Pages cho static files
+    // Static assets
     return env.ASSETS.fetch(request);
   },
 };
