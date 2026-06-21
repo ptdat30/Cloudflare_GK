@@ -2,117 +2,69 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chiếc Hộp Bí Mật – Gửi Thông Điệp</title>
-    <meta name="description" content="Gửi lời nhắn ẩn danh đến lớp học qua Chiếc Hộp Bí Mật." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Chiếc Hộp Bí Mật – Lá Thư Ẩn Danh</title>
+    <meta name="description" content="Gửi lời nhắn ẩn danh đến lớp học." />
 
-    <!-- Google Fonts: Inter cho typography hiện đại -->
+    <!-- Google Fonts: Lora (Serif) cho cảm giác cổ điển như lá thư -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
 
-    <!-- Tailwind CSS via CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      // Cấu hình Tailwind với màu sắc tùy chỉnh theo design
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              inter: ["Inter", "sans-serif"],
+              serif: ["Lora", "serif"],
+              sans: ["sans-serif"],
             },
             colors: {
-              brand: {
-                teal: "#0d9488",
-                tealLight: "#14b8a6",
-                tealDark: "#0f766e",
-                bg: "#0f1923",
-                surface: "#162231",
-                surfaceLight: "#1e3144",
-                border: "#1e3a4a",
-              },
-            },
-            animation: {
-              "fade-up": "fadeUp 0.4s ease-out forwards",
-              "pulse-soft": "pulseSoft 2s ease-in-out infinite",
-              "shimmer": "shimmer 1.5s ease-in-out infinite",
-            },
-            keyframes: {
-              fadeUp: {
-                "0%": { opacity: "0", transform: "translateY(16px)" },
-                "100%": { opacity: "1", transform: "translateY(0)" },
-              },
-              pulseSoft: {
-                "0%, 100%": { opacity: "1" },
-                "50%": { opacity: "0.7" },
-              },
-              shimmer: {
-                "0%": { backgroundPosition: "-200% 0" },
-                "100%": { backgroundPosition: "200% 0" },
-              },
-            },
-          },
-        },
+              paper: {
+                bg: "#f4f1ea",       /* Nền trang màu be nhẹ */
+                card: "#fdfbf7",     /* Màu giấy trắng ngà cho lá thư */
+                text: "#2c2c2c",     /* Màu mực đen nhạt / xám đậm */
+                muted: "#8c8c8c",
+                line: "#e8e4d9",     /* Màu dòng kẻ mờ */
+                accent: "#b54a4a",   /* Màu đỏ bã trầu như con dấu sáp (wax seal) */
+              }
+            }
+          }
+        }
       };
     </script>
 
     <style>
-      /* ---- CSS tùy chỉnh bổ sung cho Tailwind ---- */
       body {
-        font-family: "Inter", sans-serif;
-        background-color: #0f1923;
-        min-height: 100vh;
-        /* Hiệu ứng gradient nền tinh tế */
-        background-image:
-          radial-gradient(ellipse at 20% 20%, rgba(13, 148, 136, 0.08) 0%, transparent 50%),
-          radial-gradient(ellipse at 80% 80%, rgba(6, 78, 89, 0.1) 0%, transparent 50%);
+        background-color: #f4f1ea;
+        font-family: 'Lora', serif;
+        color: #2c2c2c;
       }
-
-      /* Hiệu ứng glow cho nút gửi */
-      .btn-glow {
-        box-shadow: 0 0 20px rgba(13, 148, 136, 0.4), 0 4px 15px rgba(0, 0, 0, 0.3);
-        transition: all 0.3s ease;
+      
+      /* Lá thư */
+      .letter-card {
+        background-color: #fcfaf7;
+        box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.02);
+        position: relative;
+        /* Giả lập nếp gấp nhẹ của giấy ở góc */
+        border-radius: 2px;
       }
-      .btn-glow:hover:not(:disabled) {
-        box-shadow: 0 0 35px rgba(13, 148, 136, 0.65), 0 6px 20px rgba(0, 0, 0, 0.4);
-        transform: translateY(-1px);
+      
+      /* Hiệu ứng giấy kẻ ngang giống vở học sinh / giấy thư */
+      .lined-paper {
+        background-image: repeating-linear-gradient(transparent, transparent 31px, #e8e4d9 31px, #e8e4d9 32px);
+        background-attachment: local;
+        line-height: 32px;
+        padding-top: 6px; /* Canh chỉnh để text khớp với dòng kẻ */
       }
-      .btn-glow:active:not(:disabled) {
-        transform: translateY(0px);
-        box-shadow: 0 0 15px rgba(13, 148, 136, 0.35);
-      }
-      .btn-glow:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-
-      /* Viền phát sáng cho textarea khi focus */
-      .textarea-glow:focus {
+      
+      .lined-paper:focus {
         outline: none;
-        border-color: #0d9488;
-        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2), 0 0 20px rgba(13, 148, 136, 0.1);
       }
 
-      /* Card container chính với hiệu ứng kính mờ */
-      .glass-card {
-        background: rgba(22, 34, 49, 0.85);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(30, 58, 74, 0.8);
-      }
-
-      /* Thông báo thành công */
-      .success-toast {
-        animation: fadeUp 0.4s ease-out forwards;
-      }
-
-      /* Counter chữ khi gần đầy */
-      .char-warning {
-        color: #ef4444;
-        animation: pulseSoft 1s ease-in-out infinite;
-      }
-
-      /* Scrollbar tùy chỉnh */
+      /* Tùy chỉnh thanh cuộn cho khu vực giấy */
       textarea::-webkit-scrollbar {
         width: 4px;
       }
@@ -120,114 +72,110 @@
         background: transparent;
       }
       textarea::-webkit-scrollbar-thumb {
-        background: #1e3a4a;
+        background: #d6d3cc;
         border-radius: 4px;
       }
-
-      /* Icon hộp thư animation */
-      .icon-float {
-        animation: float 3s ease-in-out infinite;
+      
+      /* Nút gửi phong cách con dấu tem thư */
+      .stamp-btn {
+        background-color: #b54a4a;
+        color: #fcfaf7;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        font-weight: 600;
+        font-family: sans-serif;
+        border-radius: 3px;
+        transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 6px rgba(181, 74, 74, 0.2);
       }
-      @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-6px); }
+      .stamp-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        background-color: #a03c3c;
+        box-shadow: 0 6px 12px rgba(181, 74, 74, 0.3);
+      }
+      .stamp-btn:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(181, 74, 74, 0.2);
+      }
+      .stamp-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
       }
 
-      /* Decorative dots background */
-      .dot-pattern {
-        background-image: radial-gradient(circle, rgba(13,148,136,0.12) 1px, transparent 1px);
-        background-size: 24px 24px;
+      .char-warning {
+        color: #b54a4a;
+        font-weight: bold;
+      }
+
+      /* Animation xuất hiện mượt mà */
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-up {
+        animation: fadeUp 0.6s ease-out forwards;
       }
     </style>
   </head>
 
-  <body class="flex items-center justify-center min-h-screen p-4">
-    <!-- Decorative background elements -->
-    <div class="fixed inset-0 dot-pattern pointer-events-none opacity-40"></div>
-    <div class="fixed top-0 left-0 w-64 h-64 rounded-full bg-teal-900/20 blur-3xl pointer-events-none -translate-x-1/2 -translate-y-1/2"></div>
-    <div class="fixed bottom-0 right-0 w-80 h-80 rounded-full bg-teal-800/10 blur-3xl pointer-events-none translate-x-1/3 translate-y-1/3"></div>
-
-    <!-- Main Card Container -->
-    <div class="glass-card rounded-3xl w-full max-w-sm p-6 relative animate-fade-up" style="animation-delay: 0.1s;">
-
-      <!-- Header: Icon + Tiêu đề -->
-      <div class="text-center mb-7">
-        <!-- Icon hộp bí mật floating -->
-        <div class="icon-float inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
-             style="background: linear-gradient(135deg, #0d9488 0%, #0891b2 100%); box-shadow: 0 8px 25px rgba(13,148,136,0.35);">
-          <span class="text-3xl" role="img" aria-label="hộp bí mật">📬</span>
-        </div>
-
-        <h1 class="text-white text-2xl font-bold tracking-tight leading-tight">
-          Gửi Lời Nhắn Đến Lớp 🚀
-        </h1>
+  <body class="flex items-center justify-center min-h-screen p-4 sm:p-8">
+    
+    <!-- Lá thư chính -->
+    <div class="letter-card w-full max-w-md p-8 sm:p-10 mx-auto animate-fade-up border border-paper-line/50">
+      
+      <!-- Header lá thư -->
+      <div class="mb-8 text-center">
+        <h1 class="text-2xl font-semibold text-paper-text mb-3 tracking-wide">Lá Thư Ẩn Danh</h1>
+        <div class="h-[1px] w-12 bg-paper-accent mx-auto opacity-40"></div>
       </div>
 
-      <!-- Form gửi tin nhắn -->
-      <form id="message-form" class="space-y-4" novalidate>
-
-        <!-- Textarea nhập tin nhắn -->
+      <!-- Form nhập nội dung -->
+      <form id="message-form" class="space-y-6" novalidate>
+        
         <div class="relative">
           <textarea
             id="message-input"
             name="content"
             maxlength="200"
-            rows="5"
-            placeholder="Viết thông điệp ẩn danh của bạn (tối đa 200 ký tự)..."
-            class="textarea-glow w-full bg-brand-bg border border-brand-border rounded-2xl px-4 py-3.5 text-white placeholder-slate-500 text-sm resize-none leading-relaxed transition-all duration-300"
-            style="background-color: #0a1520;"
-            aria-label="Nội dung tin nhắn"
-            aria-describedby="char-counter"
+            rows="6"
+            placeholder="Viết vài dòng tâm sự gửi đến lớp..."
+            class="lined-paper w-full bg-transparent border-none text-paper-text placeholder-paper-muted/60 text-lg resize-none"
+            aria-label="Nội dung thư"
           ></textarea>
-
-          <!-- Bộ đếm ký tự hiển thị ở góc dưới textarea -->
-          <div class="absolute bottom-3 right-3 flex items-center gap-1.5">
-            <span id="char-counter" class="text-xs text-slate-500 font-mono tabular-nums" aria-live="polite">
-              0/200
-            </span>
+          
+          <div class="absolute -bottom-6 right-0">
+             <span id="char-counter" class="text-xs text-paper-muted font-sans tracking-widest">0/200</span>
           </div>
         </div>
 
-        <!-- Thông báo lỗi (ẩn mặc định) -->
-        <div id="error-message"
-             class="hidden flex items-center gap-2 bg-red-950/60 border border-red-800/50 rounded-xl px-4 py-3 text-red-400 text-sm"
-             role="alert">
-          <span>⚠️</span>
-          <span id="error-text">Vui lòng nhập nội dung tin nhắn.</span>
+        <!-- Thông báo lỗi -->
+        <div id="error-message" class="hidden pt-2" role="alert">
+          <p id="error-text" class="text-paper-accent text-sm text-center italic font-medium">Vui lòng nhập nội dung.</p>
         </div>
 
-        <!-- Nút Gửi -->
-        <button
-          type="submit"
-          id="submit-btn"
-          class="btn-glow w-full py-4 rounded-2xl text-white font-semibold text-base tracking-wide transition-all duration-300"
-          style="background: linear-gradient(135deg, #0d9488 0%, #0891b2 100%);"
-          aria-label="Gửi tin nhắn"
-        >
-          <span id="btn-text" class="flex items-center justify-center gap-2">
-            Gửi 🚀
-          </span>
-          <!-- Spinner hiển thị khi đang gửi -->
-          <span id="btn-spinner" class="hidden items-center justify-center gap-2">
-            <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-            </svg>
-            Đang gửi...
-          </span>
-        </button>
+        <!-- Nút Gửi (Tem) -->
+        <div class="pt-8 flex justify-center">
+          <button
+            type="submit"
+            id="submit-btn"
+            class="stamp-btn px-8 py-3 text-xs sm:text-sm flex items-center justify-center gap-2 w-full sm:w-auto"
+          >
+            <span id="btn-text">Gửi Đi 🕊️</span>
+            <span id="btn-spinner" class="hidden items-center justify-center gap-2">
+              <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+              Đang dán tem...
+            </span>
+          </button>
+        </div>
       </form>
-
-      <!-- Thông báo thành công (ẩn mặc định, hiện sau khi gửi) -->
-      <div id="success-toast"
-           class="hidden success-toast mt-4 flex flex-col items-center gap-2 bg-teal-950/70 border border-teal-700/60 rounded-2xl px-4 py-4 text-center"
-           role="status"
-           aria-live="polite">
-        <span class="text-2xl">✨</span>
-        <p class="text-teal-300 font-medium text-sm leading-snug">
-          Gửi thành công! Hãy nhìn lên màn hình máy chiếu nhé ✨
-        </p>
-        <p class="text-teal-500/70 text-xs">Tin nhắn của bạn đã được hiển thị</p>
+      
+      <!-- Thông báo thành công -->
+      <div id="success-toast" class="hidden mt-8 text-center p-4 border border-paper-line bg-paper-bg/30" role="status">
+        <p class="text-paper-text font-medium italic">"Lá thư của bạn đã được gửi bay đi..." ✨</p>
       </div>
 
     </div>
@@ -236,7 +184,6 @@
          JAVASCRIPT: Xử lý form gửi tin nhắn
          ==================================================== -->
     <script>
-      // ---- Lấy các phần tử DOM cần dùng ----
       const form = document.getElementById("message-form");
       const textarea = document.getElementById("message-input");
       const charCounter = document.getElementById("char-counter");
@@ -247,42 +194,33 @@
       const errorText = document.getElementById("error-text");
       const successToast = document.getElementById("success-toast");
 
-      // ---- Cập nhật bộ đếm ký tự theo thời gian thực ----
+      // Cập nhật bộ đếm ký tự
       textarea.addEventListener("input", () => {
         const currentLength = textarea.value.length;
-        const maxLength = 200;
+        charCounter.textContent = `${currentLength}/200`;
 
-        charCounter.textContent = `${currentLength}/${maxLength}`;
-
-        // Đổi màu đỏ và nhấp nháy khi gần đạt giới hạn (> 180 ký tự)
         if (currentLength > 180) {
           charCounter.classList.add("char-warning");
-          charCounter.classList.remove("text-slate-500");
+          charCounter.classList.remove("text-paper-muted");
         } else {
           charCounter.classList.remove("char-warning");
-          charCounter.classList.add("text-slate-500");
+          charCounter.classList.add("text-paper-muted");
         }
 
-        // Ẩn thông báo lỗi khi người dùng bắt đầu nhập lại
-        if (currentLength > 0) {
-          hideError();
-        }
+        if (currentLength > 0) hideError();
       });
 
-      // ---- Hàm hiển thị thông báo lỗi ----
       function showError(message) {
         errorText.textContent = message;
         errorMessage.classList.remove("hidden");
-        errorMessage.classList.add("flex");
+        errorMessage.classList.add("block");
       }
 
-      // ---- Hàm ẩn thông báo lỗi ----
       function hideError() {
         errorMessage.classList.add("hidden");
-        errorMessage.classList.remove("flex");
+        errorMessage.classList.remove("block");
       }
 
-      // ---- Hàm bật trạng thái loading cho nút ----
       function setLoading(isLoading) {
         submitBtn.disabled = isLoading;
         if (isLoading) {
@@ -296,86 +234,65 @@
         }
       }
 
-      // ---- Hàm hiển thị thông báo thành công ----
       function showSuccess() {
         successToast.classList.remove("hidden");
-        successToast.classList.add("flex");
-
-        // Tự ẩn thông báo sau 5 giây
+        successToast.classList.add("block");
         setTimeout(() => {
           successToast.classList.add("hidden");
-          successToast.classList.remove("flex");
+          successToast.classList.remove("block");
         }, 5000);
       }
 
-      // ---- Xử lý sự kiện submit form ----
       form.addEventListener("submit", async (event) => {
-        // Ngăn form reload trang theo mặc định của HTML
         event.preventDefault();
-
-        // Lấy nội dung tin nhắn và loại bỏ khoảng trắng thừa
         const content = textarea.value.trim();
 
-        // Kiểm tra hợp lệ phía client trước khi gửi lên server
         if (!content) {
-          showError("Vui lòng nhập nội dung tin nhắn trước khi gửi.");
+          showError("Bạn quên viết thư rồi.");
           textarea.focus();
           return;
         }
 
         if (content.length > 200) {
-          showError("Tin nhắn không được vượt quá 200 ký tự.");
+          showError("Thư dài quá (tối đa 200 ký tự).");
           return;
         }
 
-        // Bật trạng thái loading
         setLoading(true);
         hideError();
 
         try {
-          // Gửi POST request lên Cloudflare Pages Function
           let response;
           try {
             response = await fetch("/functions/send", {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ content: content }),
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ content }),
             });
           } catch (fetchError) {
-            // Lỗi mạng thực sự (offline, DNS fail, v.v.)
-            console.error("Lỗi fetch:", fetchError);
-            showError("Không thể kết nối đến server. Kiểm tra kết nối mạng.");
+            showError("Lỗi kết nối. Không thể gửi thư.");
             return;
           }
 
-          // Thử parse JSON, nếu không được thì hiển thị status code để debug
           let result;
           try {
             result = await response.json();
           } catch (jsonError) {
-            console.error("Response không phải JSON. HTTP Status:", response.status);
-            showError(`Lỗi server (HTTP ${response.status}). Mở F12 → Console để xem chi tiết.`);
+            showError(`Lỗi hệ thống (HTTP ${response.status}).`);
             return;
           }
 
           if (response.ok && result.success) {
-            // Gửi thành công: xóa textarea và hiển thị thông báo
             textarea.value = "";
             charCounter.textContent = "0/200";
             charCounter.classList.remove("char-warning");
             showSuccess();
           } else {
-            // Server trả về lỗi có thông báo cụ thể
-            showError(result.error || `Gửi thất bại (HTTP ${response.status}). Vui lòng thử lại.`);
+            showError(result.error || "Gửi thư thất bại, thử lại nhé.");
           }
         } catch (unexpectedError) {
-          console.error("Lỗi không mong đợi:", unexpectedError);
           showError("Lỗi không xác định: " + unexpectedError.message);
-        }
- finally {
-          // Luôn tắt trạng thái loading dù thành công hay thất bại
+        } finally {
           setLoading(false);
         }
       });
