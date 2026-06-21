@@ -111,6 +111,32 @@
         animation: gradientX 5s linear infinite;
       }
 
+      /* ---- @keyframes khai báo trực tiếp (không dùng Tailwind JIT) ---- */
+      @keyframes slideInLeft {
+        0%   { opacity: 0; transform: translateX(-30px) scale(0.97); }
+        100% { opacity: 1; transform: translateX(0) scale(1); }
+      }
+      @keyframes badgePop {
+        0%   { transform: scale(0); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+      @keyframes pulseDot {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50%       { transform: scale(1.4); opacity: 0.6; }
+      }
+      @keyframes gradientX {
+        0%, 100% { background-position: 0% 50%; }
+        50%       { background-position: 100% 50%; }
+      }
+      @keyframes floatSubtle {
+        0%, 100% { transform: translateY(0); }
+        50%       { transform: translateY(-5px); }
+      }
+      @keyframes fadeIn {
+        0%   { opacity: 0; }
+        100% { opacity: 1; }
+      }
+
       /* ---- Card tin nhắn ---- */
       .message-card {
         background: linear-gradient(135deg, #132236 0%, #0f1d30 100%);
@@ -119,7 +145,7 @@
         padding: 18px 22px;
         position: relative;
         overflow: hidden;
-        opacity: 0; /* Ban đầu ẩn, JS sẽ kích hoạt animation */
+        opacity: 0; /* Bắt đầu ẩn – animate-slide sẽ đưa về opacity: 1 */
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
       }
 
@@ -147,7 +173,7 @@
         border-radius: 50%;
       }
 
-      /* Card mới xuất hiện với animation */
+      /* Card mới xuất hiện với animation slideInLeft */
       .message-card.animate-slide {
         animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
@@ -595,13 +621,13 @@
               // Tạo card với badge "MỚI"
               const card = createMessageCard(msg, true);
 
-              // Chèn vào ĐẦU container (phía trên trạng thái rỗng hoặc các card cũ)
-              // Chú ý: emptyState là phần tử đầu, ta insert sau nó nếu có
+              // Chèn card vào ĐẦU container (trước card cũ nhất nếu có, hoặc append)
               const firstCard = messagesContainer.querySelector(".message-card");
               if (firstCard) {
+                // Đã có card khác → chèn trước card đầu tiên
                 messagesContainer.insertBefore(card, firstCard);
               } else {
-                messagesContainer.insertBefore(card, emptyState.nextSibling || null);
+                // Chưa có card nào → append vào cuối container (sau empty-state)
                 messagesContainer.appendChild(card);
               }
 
