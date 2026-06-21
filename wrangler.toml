@@ -1,16 +1,18 @@
 # Cloudflare Pages – Cấu hình dành cho Pages project
 #
-# Lưu ý:
-#   - KV binding "MESSAGES_KV" được quản lý qua wrangler.toml (không cấu hình qua Dashboard)
-#   - Để test LOCAL: npx wrangler pages dev . --kv MESSAGES_KV
+# Cấu trúc project:
+#   public/          ← Static assets (index.html, dashboard.html, extended.svg)
+#   functions/       ← Pages Functions (send.js, get.js) - KHÔNG phải static
+#
+# Deploy: npx wrangler pages deploy public --project-name=cloudflare-gk-pages
 
 name = "cloudflare-gk-pages"
 compatibility_date = "2024-01-01"
 
-# Thư mục chứa static assets để Cloudflare Pages deploy
-pages_build_output_dir = "."
+# Static assets chỉ từ thư mục public/ (tránh xung đột với functions/)
+pages_build_output_dir = "public"
 
-# KV namespace binding cho MESSAGES_KV (tạo bằng: wrangler kv namespace create MESSAGES_KV)
+# KV namespace binding cho MESSAGES_KV
 [[kv_namespaces]]
 binding = "MESSAGES_KV"
 id = "ca3b21b11c3a400fa5fd42705f469291"
