@@ -1,8 +1,7 @@
 # Cloudflare Pages – Cấu hình dành cho Pages project
 #
 # Lưu ý:
-#   - KV binding "MESSAGES_KV" được cấu hình trong Dashboard:
-#     Pages → cloudflare-gk-pages → Settings → Bindings → KV namespace bindings
+#   - KV binding "MESSAGES_KV" được quản lý qua wrangler.toml (không cấu hình qua Dashboard)
 #   - Để test LOCAL: npx wrangler pages dev . --kv MESSAGES_KV
 
 name = "cloudflare-gk-pages"
@@ -11,8 +10,7 @@ compatibility_date = "2024-01-01"
 # Thư mục chứa static assets để Cloudflare Pages deploy
 pages_build_output_dir = "."
 
-# !! KV namespace binding được cấu hình qua Cloudflare Dashboard, KHÔNG cần ở đây khi deploy
-# Uncomment dòng dưới CHỈ KHI test local với wrangler pages dev:
-# [[kv_namespaces]]
-# binding = "MESSAGES_KV"
-# id = "YOUR_LOCAL_KV_ID"
+# KV namespace binding cho MESSAGES_KV (tạo bằng: wrangler kv namespace create MESSAGES_KV)
+[[kv_namespaces]]
+binding = "MESSAGES_KV"
+id = "ca3b21b11c3a400fa5fd42705f469291"
