@@ -1,0 +1,13 @@
+# Cloudflare Pages Assets Ignore
+# Các file/thư mục này sẽ KHÔNG được upload như static assets
+# (tương tự .gitignore nhưng cho wrangler pages deploy)
+
+# Thư mục Functions - được Cloudflare Pages xử lý riêng, không phải static asset
+functions/
+
+# File cấu hình - không cần serve cho người dùng
+wrangler.toml
+
+# Git metadata
+.git/
+.gitignore
