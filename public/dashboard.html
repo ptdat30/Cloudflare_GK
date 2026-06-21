@@ -3,75 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1920" />
-    <title>Hộp Thư Ẩn Danh – Màn Hình Máy Chiếu</title>
+    <title>Hộp Thư Ẩn Danh – Bảng Điều Khiển</title>
     <meta name="description" content="Dashboard hiển thị tin nhắn ẩn danh từ lớp học theo thời gian thực." />
 
-    <!-- Google Fonts: Inter -->
+    <!-- Google Fonts: Lora (Serif) & Inter (Sans-serif) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
 
-    <!-- Tailwind CSS via CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              inter: ["Inter", "sans-serif"],
+              serif: ["Lora", "serif"],
+              sans: ["Inter", "sans-serif"],
             },
             colors: {
-              dash: {
-                bg: "#0a1120",
-                panel: "#0f1a2e",
-                card: "#132236",
-                cardHover: "#1a2d45",
-                border: "#1e3554",
-                borderLight: "#2a4568",
-                teal: "#0d9488",
-                tealLight: "#14b8a6",
-                tealGlow: "#0891b2",
-                accent: "#38bdf8",
-                accentDim: "#0369a1",
-                textPrimary: "#e2e8f0",
-                textSecondary: "#94a3b8",
-                textMuted: "#64748b",
-                new: "#10b981",
-                newBg: "#052e16",
+              vintage: {
+                wood: "#231812",       /* Gỗ gụ đậm / Mahogany */
+                woodLight: "#38251b",
+                brass: "#b89052",      /* Vàng đồng / Brass */
+                brassDark: "#856434",
+                brassLight: "#d4af37",
+                paper: "#fcfaf7",      /* Giấy thư / Parchment */
+                paperDark: "#e8e4d9",
+                textDark: "#2c2c2c",
+                textMuted: "#736b5e",
+                red: "#8b2e2e",        /* Đỏ nhung / Sáp */
+                green: "#2e593b",
               },
             },
             animation: {
-              "slide-in-left": "slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-              "fade-in": "fadeIn 0.4s ease-out forwards",
-              "pulse-dot": "pulseDot 1.5s ease-in-out infinite",
-              "gradient-x": "gradientX 4s ease infinite",
-              "float-subtle": "floatSubtle 4s ease-in-out infinite",
-              "badge-pop": "badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+              "slide-in-up": "slideInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards",
+              "fade-in": "fadeIn 0.5s ease-out forwards",
             },
             keyframes: {
-              slideInLeft: {
-                "0%": { opacity: "0", transform: "translateX(-30px) scale(0.97)" },
-                "100%": { opacity: "1", transform: "translateX(0) scale(1)" },
+              slideInUp: {
+                "0%": { opacity: "0", transform: "translateY(20px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
               },
               fadeIn: {
                 "0%": { opacity: "0" },
                 "100%": { opacity: "1" },
-              },
-              pulseDot: {
-                "0%, 100%": { transform: "scale(1)", opacity: "1" },
-                "50%": { transform: "scale(1.4)", opacity: "0.6" },
-              },
-              gradientX: {
-                "0%, 100%": { backgroundPosition: "0% 50%" },
-                "50%": { backgroundPosition: "100% 50%" },
-              },
-              floatSubtle: {
-                "0%, 100%": { transform: "translateY(0)" },
-                "50%": { transform: "translateY(-5px)" },
-              },
-              badgePop: {
-                "0%": { transform: "scale(0)", opacity: "0" },
-                "100%": { transform: "scale(1)", opacity: "1" },
               },
             },
           },
@@ -80,689 +56,428 @@
     </script>
 
     <style>
-      /* ---- Reset và thiết lập nền toàn màn hình ---- */
+      /* ---- Reset ---- */
       *, *::before, *::after { box-sizing: border-box; }
 
       html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden; /* Không scroll, toàn màn hình */
+        margin: 0; padding: 0;
+        width: 100%; height: 100%;
+        overflow: hidden;
+        background-color: #1a120d;
         font-family: "Inter", sans-serif;
-        background-color: #0a1120;
       }
 
-      /* Nền với lớp gradient huyền bí */
+      /* Nền vân gỗ tối màu huyền bí */
       body {
-        background-image:
-          radial-gradient(ellipse at 5% 50%, rgba(13, 148, 136, 0.07) 0%, transparent 45%),
-          radial-gradient(ellipse at 95% 20%, rgba(8, 145, 178, 0.06) 0%, transparent 40%),
-          radial-gradient(ellipse at 50% 95%, rgba(6, 78, 89, 0.08) 0%, transparent 50%);
+        background-image: 
+          radial-gradient(circle at 50% 0%, rgba(56, 37, 27, 0.6) 0%, transparent 60%),
+          linear-gradient(to bottom, #231812 0%, #110b08 100%);
       }
 
-      /* ---- Tiêu đề gradient chạy màu ---- */
-      .title-gradient {
-        background: linear-gradient(90deg, #e2e8f0 0%, #14b8a6 40%, #38bdf8 70%, #e2e8f0 100%);
-        background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: gradientX 5s linear infinite;
-      }
+      /* ---- Scrollbar cổ điển ---- */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+      ::-webkit-scrollbar-thumb { background: #5c4332; border-radius: 4px; border: 1px solid #231812; }
+      ::-webkit-scrollbar-thumb:hover { background: #856434; }
 
-      /* ---- @keyframes khai báo trực tiếp (không dùng Tailwind JIT) ---- */
-      @keyframes slideInLeft {
-        0%   { opacity: 0; transform: translateX(-30px) scale(0.97); }
-        100% { opacity: 1; transform: translateX(0) scale(1); }
-      }
-      @keyframes badgePop {
-        0%   { transform: scale(0); opacity: 0; }
-        100% { transform: scale(1); opacity: 1; }
-      }
-      @keyframes pulseDot {
-        0%, 100% { transform: scale(1); opacity: 1; }
-        50%       { transform: scale(1.4); opacity: 0.6; }
-      }
-      @keyframes gradientX {
-        0%, 100% { background-position: 0% 50%; }
-        50%       { background-position: 100% 50%; }
-      }
-      @keyframes floatSubtle {
-        0%, 100% { transform: translateY(0); }
-        50%       { transform: translateY(-5px); }
-      }
-      @keyframes fadeIn {
-        0%   { opacity: 0; }
-        100% { opacity: 1; }
-      }
-
-      /* ---- Card tin nhắn ---- */
+      /* ---- Card Lá Thư ---- */
       .message-card {
-        background: linear-gradient(135deg, #132236 0%, #0f1d30 100%);
-        border: 1px solid #1e3554;
-        border-radius: 16px;
-        padding: 18px 22px;
+        background-color: #fcfaf7;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3), inset 0 0 40px rgba(184, 144, 82, 0.05);
+        border: 1px solid #e8e4d9;
+        border-radius: 4px;
+        padding: 24px 30px;
         position: relative;
         overflow: hidden;
-        flex-shrink: 0; /* KHÔNG BỊ BÓP MÉO KHI CÓ QUÁ NHIỀU TIN NHẮN */
-        opacity: 0; /* Bắt đầu ẩn – animate-slide sẽ đưa về opacity: 1 */
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        flex-shrink: 0; 
+        opacity: 0; 
+        /* Giả lập vân giấy mờ */
+        background-image: radial-gradient(#d4af37 0.5px, transparent 0.5px);
+        background-size: 32px 32px;
+        background-position: -16px -16px;
       }
 
-      /* Thanh teal bên trái của mỗi card */
-      .message-card::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        background: linear-gradient(180deg, #0d9488 0%, #0891b2 100%);
-        border-radius: 16px 0 0 16px;
-      }
-
-      /* Hiệu ứng ánh sáng nhẹ ở góc trên phải */
+      /* Nếp gấp ở góc lá thư */
       .message-card::after {
         content: "";
         position: absolute;
-        top: -30px;
-        right: -30px;
-        width: 80px;
-        height: 80px;
-        background: radial-gradient(circle, rgba(13, 148, 136, 0.08) 0%, transparent 70%);
-        border-radius: 50%;
+        top: 0; right: 0;
+        border-width: 0 20px 20px 0;
+        border-style: solid;
+        border-color: #e8e4d9 #110b08;
+        box-shadow: -2px 2px 4px rgba(0,0,0,0.1);
       }
 
-      /* Card mới xuất hiện với animation slideInLeft */
       .message-card.animate-slide {
-        animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        animation: slideInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
       }
 
-      /* ---- Khu vực cuộn tin nhắn ---- */
+      /* Container tin nhắn */
       #messages-container {
         height: 100%;
         overflow-y: auto;
-        padding-right: 4px;
+        padding: 20px 10px;
         display: flex;
         flex-direction: column;
-        gap: 14px;
+        gap: 20px;
       }
 
-      /* Scrollbar tùy chỉnh cho container tin nhắn */
-      #messages-container::-webkit-scrollbar { width: 5px; }
-      #messages-container::-webkit-scrollbar-track { background: transparent; }
-      #messages-container::-webkit-scrollbar-thumb {
-        background: #1e3554;
-        border-radius: 4px;
-      }
-      #messages-container::-webkit-scrollbar-thumb:hover {
-        background: #2a4568;
-      }
-
-      /* ---- Badge "MỚI" ---- */
+      /* ---- Badge "MỚI" như dấu mộc đỏ ---- */
       .badge-new {
         display: inline-flex;
         align-items: center;
-        background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
-        color: white;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        padding: 2px 8px;
-        border-radius: 20px;
-        text-transform: uppercase;
-        animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        box-shadow: 0 2px 8px rgba(5, 150, 105, 0.4);
+        background-color: #8b2e2e;
+        color: #fcfaf7;
+        font-family: 'Lora', serif;
+        font-size: 11px;
+        font-style: italic;
+        padding: 2px 10px;
+        border-radius: 2px;
+        border: 1px solid #a83e3e;
+        box-shadow: 0 2px 4px rgba(139, 46, 46, 0.3);
       }
 
-      /* ---- Dot trạng thái LIVE ---- */
-      .live-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background-color: #10b981;
-        animation: pulseDot 1.5s ease-in-out infinite;
-        box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
-      }
-
-      /* ---- Panel vùng QR code ---- */
-      .qr-panel {
-        background: linear-gradient(135deg, #0f1d30 0%, #091525 100%);
-        border: 1px solid #1e3554;
-        border-radius: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 16px;
-        padding: 24px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      /* Hiệu ứng ánh sáng teal phía sau QR panel */
-      .qr-panel::before {
-        content: "";
-        position: absolute;
-        inset: -1px;
-        border-radius: 20px;
-        background: linear-gradient(135deg, rgba(13,148,136,0.15) 0%, transparent 50%, rgba(8,145,178,0.1) 100%);
-        pointer-events: none;
-      }
-
-      /* Khung viền glow cho ảnh QR */
-      .qr-image-wrapper {
-        border-radius: 16px;
-        padding: 10px;
-        background: white;
-        box-shadow:
-          0 0 0 1px rgba(13, 148, 136, 0.3),
-          0 0 30px rgba(13, 148, 136, 0.25),
-          0 0 60px rgba(13, 148, 136, 0.1);
-        animation: floatSubtle 4s ease-in-out infinite;
-        transition: box-shadow 0.3s ease;
-      }
-
-      /* Placeholder khi chưa có ảnh QR */
-      .qr-placeholder {
-        width: 160px;
-        height: 160px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        color: #64748b;
-        font-size: 12px;
-        font-weight: 500;
-        text-align: center;
-      }
-
-      /* ---- Trạng thái rỗng (chưa có tin nhắn) ---- */
+      /* ---- Trạng thái rỗng ---- */
       .empty-state {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         height: 100%;
-        gap: 16px;
-        opacity: 0.5;
+        gap: 20px;
+        opacity: 0.7;
         animation: fadeIn 0.8s ease-out forwards;
       }
 
-      /* ---- Decorative dot grid ---- */
-      .dot-grid {
-        background-image: radial-gradient(circle, rgba(30,53,84,0.6) 1px, transparent 1px);
-        background-size: 28px 28px;
+      /* ---- Panels (QR & Stats) phong cách khung tranh / biển đồng ---- */
+      .vintage-panel {
+        background: linear-gradient(145deg, #2a1c14, #1c110a);
+        border: 2px solid #5c4332;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 2px 0 rgba(255,255,255,0.05);
+        position: relative;
       }
 
-      /* ---- Header separator line ---- */
-      .separator {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, #1e3554 20%, #2a4568 50%, #1e3554 80%, transparent);
+      .vintage-panel::before {
+        content: "";
+        position: absolute;
+        inset: 4px;
+        border: 1px solid rgba(184, 144, 82, 0.15); /* Viền mạ đồng mỏng bên trong */
+        border-radius: 4px;
+        pointer-events: none;
       }
 
-      /* ---- Toggle buttons (ẩn/hiện panel) ---- */
+      /* ---- Toggle buttons (Nút bấm bằng đồng) ---- */
       .toggle-btn {
-        background: rgba(14, 165, 233, 0.08);
-        border: 1px solid rgba(14, 165, 233, 0.2);
-        color: #64748b;
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        padding: 3px 9px;
-        border-radius: 12px;
+        background: linear-gradient(to bottom, #4a3324, #2a1c14);
+        border: 1px solid #5c4332;
+        color: #b89052;
+        font-family: "Lora", serif;
+        font-size: 13px;
+        padding: 6px 14px;
+        border-radius: 4px;
         cursor: pointer;
-        transition: all 0.2s ease;
-        user-select: none;
+        transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        text-shadow: 0 1px 1px rgba(0,0,0,0.8);
       }
-      .toggle-btn:hover { color: #14b8a6; border-color: rgba(20,184,166,0.4); background: rgba(20,184,166,0.1); }
-      .toggle-btn.active { color: #14b8a6; border-color: rgba(20,184,166,0.5); background: rgba(20,184,166,0.12); }
+      .toggle-btn:hover {
+        background: linear-gradient(to bottom, #5c4332, #3a261a);
+        color: #d4af37;
+      }
+      .toggle-btn.active {
+        background: linear-gradient(to bottom, #2a1c14, #1a110a);
+        color: #d4af37;
+        border-color: #856434;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+      }
 
-      /* ---- Panel ẩn/hiện với transition ---- */
+      .btn-danger {
+        color: #e67373 !important;
+      }
+      .btn-danger:hover { color: #ff8a8a !important; }
+
+      /* ---- Panel Ẩn/Hiện ---- */
       .right-panel {
-        transition: width 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.3s ease;
       }
       .right-panel.hidden-panel {
-        width: 0 !important;
-        opacity: 0;
-        padding: 0 !important;
-        overflow: hidden;
-        pointer-events: none;
+        width: 0 !important; opacity: 0; padding: 0 !important; pointer-events: none;
       }
       .collapsible {
-        transition: max-height 0.35s ease, opacity 0.3s ease, margin 0.3s ease;
-        max-height: 600px;
-        overflow: hidden;
+        transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+        max-height: 800px; overflow: hidden;
       }
       .collapsible.collapsed {
-        max-height: 0;
-        opacity: 0;
-        margin: 0 !important;
+        max-height: 0; opacity: 0; margin: 0 !important; border: none; padding-top: 0; padding-bottom: 0;
       }
 
-      /* ---- QR click hint ---- */
+      /* ---- QR Code Image ---- */
       .qr-image-wrapper {
-        position: relative;
+        background: #fcfaf7;
+        padding: 12px;
+        border-radius: 4px;
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.4);
         cursor: zoom-in;
+        border: 1px solid #d4af37;
       }
-      .qr-zoom-hint {
-        position: absolute;
-        bottom: -6px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(13,148,136,0.85);
-        color: white;
-        font-size: 10px;
-        font-weight: 600;
-        padding: 2px 8px;
-        border-radius: 8px;
-        white-space: nowrap;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-        pointer-events: none;
-      }
-      .qr-image-wrapper:hover .qr-zoom-hint { opacity: 1; }
 
-      /* ---- QR Fullscreen Modal ---- */
       #qr-modal {
         display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        background: rgba(5, 10, 20, 0.95);
-        backdrop-filter: blur(12px);
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        gap: 24px;
+        position: fixed; inset: 0; z-index: 9999;
+        background: rgba(17, 11, 8, 0.9);
+        backdrop-filter: blur(5px);
+        align-items: center; justify-content: center; flex-direction: column;
         cursor: zoom-out;
-        animation: fadeIn 0.2s ease-out;
       }
       #qr-modal.open { display: flex; }
       #qr-modal img {
-        width: min(80vw, 80vh);
-        height: min(80vw, 80vh);
-        border-radius: 20px;
-        box-shadow: 0 0 0 4px rgba(20,184,166,0.4), 0 0 80px rgba(13,148,136,0.3);
-        animation: floatSubtle 4s ease-in-out infinite;
-      }
-      #qr-modal p {
-        color: #64748b;
-        font-size: 14px;
-        letter-spacing: 0.1em;
+        width: min(70vw, 70vh); height: min(70vw, 70vh);
+        border: 16px solid #fcfaf7;
+        border-radius: 4px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.8);
       }
 
-      /* ---- Số đếm tin nhắn ---- */
-      .count-badge {
-        background: rgba(13, 148, 136, 0.15);
-        border: 1px solid rgba(13, 148, 136, 0.3);
-        color: #14b8a6;
-        font-size: 13px;
-        font-weight: 600;
-        padding: 4px 12px;
-        border-radius: 20px;
-        min-width: 40px;
-        text-align: center;
-        transition: all 0.3s ease;
+      /* ---- Text Decor ---- */
+      .engraved-text {
+        color: #b89052;
+        text-shadow: 0 1px 1px rgba(255,255,255,0.1), 0 -1px 1px rgba(0,0,0,0.8);
+        font-family: 'Lora', serif;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
       }
     </style>
   </head>
 
-  <body class="dot-grid">
-
-    <!--
-      ============================================================
-      LAYOUT CHÍNH: Chia làm 2 cột
-      - Trái (70%): Danh sách tin nhắn cuộn
-      - Phải (30%): QR Code + Thống kê
-      ============================================================
-    -->
+  <body>
     <div class="flex h-screen w-screen">
 
-      <!-- ==================== CỘT TRÁI: TIN NHẮN ==================== -->
+      <!-- ==================== CỘT TRÁI: HỘP THƯ LƯU TRỮ ==================== -->
       <div class="flex-1 flex flex-col p-8 pr-4 min-w-0">
-
-        <!-- Header -->
-        <div class="flex-shrink-0 mb-6">
-
-          <!-- Dòng trên: LIVE indicator + thời gian + toggle buttons -->
-          <div class="flex items-center justify-between mb-3">
+        
+        <!-- Header Controls -->
+        <div class="flex-shrink-0 mb-6 border-b border-vintage-woodLight pb-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <h1 class="engraved-text text-xl font-bold">Hộp Thư Lớp</h1>
+            </div>
+            
             <div class="flex items-center gap-3">
-              <div class="live-dot"></div>
-              <span class="text-emerald-400 text-sm font-semibold tracking-wider uppercase">
-                LIVE
-              </span>
-            </div>
-            <div class="flex items-center gap-2">
-              <button id="btn-toggle-qr" class="toggle-btn active" title="Ẩn/hiện QR (phím Q)">QR</button>
-              <button id="btn-toggle-stats" class="toggle-btn active" title="Ẩn/hiện thống kê (phím S)">Stat</button>
-              <button id="btn-toggle-voice" class="toggle-btn" title="Bật/Tắt AI Đọc (phím A)">🔈 Đọc</button>
-              <button id="btn-clear-all" class="toggle-btn" style="background-color: rgba(239, 68, 68, 0.1); color: #f87171; border-color: rgba(239, 68, 68, 0.2);" title="Xóa tất cả tin nhắn hiện có">🗑️ Xóa hết</button>
-              <span class="text-dash-textMuted text-sm ml-2" id="last-updated">Đang tải...</span>
-              <div class="count-badge" id="message-count">0</div>
-            </div>
-          </div>
-
-
-
-          <!-- Đường phân cách -->
-          <div class="separator mt-4"></div>
-        </div>
-
-        <!-- Khu vực danh sách tin nhắn (chiếm toàn bộ không gian còn lại) -->
-        <div class="flex-1 min-h-0">
-          <div id="messages-container">
-
-            <!-- Trạng thái rỗng - hiển thị khi chưa có tin nhắn nào -->
-            <div id="empty-state" class="empty-state">
-              <div class="text-6xl animate-float-subtle">📭</div>
-              <p class="text-dash-textSecondary text-xl font-light text-center">
-                Chưa có tin nhắn nào<br/>
-                <span class="text-dash-textMuted text-base">Hãy quét mã QR để bắt đầu!</span>
-              </p>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ==================== CỘT PHẢI: QR CODE + THỐNG KÊ ==================== -->
-      <div id="right-panel" class="right-panel flex-shrink-0 w-80 p-8 pl-4 flex flex-col gap-5">
-
-        <!-- Panel QR Code -->
-        <div id="qr-panel" class="qr-panel collapsible flex-1">
-
-
-
-          <!-- Khung ảnh QR (click để phóng to) -->
-          <div class="qr-image-wrapper" id="qr-wrapper" title="Click để phóng to">
-            <img
-              id="qr-img"
-              src="extended.svg"
-              alt="QR Code để gửi tin nhắn ẩn danh"
-              width="160"
-              height="160"
-              style="border-radius: 8px; display: block;"
-            />
-            <span class="qr-zoom-hint">🔍 Click để phóng to</span>
-          </div>
-
-
-
-        </div>
-
-        <!-- Panel thống kê nhỏ phía dưới -->
-        <div id="stats-panel" class="collapsible rounded-2xl p-4 border border-dash-border" style="background: linear-gradient(135deg, #0f1d30 0%, #091525 100%);">
-          <p class="text-dash-textMuted text-xs uppercase tracking-widest mb-3 font-medium">
-            Thống kê phiên
-          </p>
-          <div class="space-y-2.5">
-            <div class="flex items-center justify-between">
-              <span class="text-dash-textSecondary text-sm">Tin nhắn nhận được</span>
-              <span class="text-dash-tealLight font-bold text-sm" id="stat-total">0</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-dash-textSecondary text-sm">Cập nhật mỗi</span>
-              <span class="text-dash-textPrimary font-medium text-sm">1 giây</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-dash-textSecondary text-sm">Trạng thái</span>
-              <div class="flex items-center gap-1.5">
-                <div class="live-dot" style="width:7px; height:7px;"></div>
-                <span class="text-emerald-400 font-medium text-sm">Hoạt động</span>
+              <button id="btn-toggle-qr" class="toggle-btn active" title="Bật/Tắt QR (phím Q)">QR</button>
+              <button id="btn-toggle-stats" class="toggle-btn active" title="Bật/Tắt Bảng Đồng (phím S)">Biển Hiệu</button>
+              <button id="btn-toggle-voice" class="toggle-btn" title="Bật/Tắt Giọng Đọc (phím A)">🔈 Đọc</button>
+              <button id="btn-clear-all" class="toggle-btn btn-danger" title="Đốt toàn bộ thư">🔥 Đốt Thư</button>
+              
+              <div class="ml-4 flex flex-col items-end">
+                <span class="text-vintage-brassDark text-xs font-serif italic" id="last-updated">Đang mở hòm thư...</span>
+                <div class="text-vintage-brass font-bold text-sm tracking-widest mt-1">
+                  SỐ THƯ: <span id="message-count">0</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Khay chứa thư (Danh sách tin nhắn) -->
+        <div class="flex-1 min-h-0 bg-black/20 rounded-lg shadow-inner border border-vintage-woodLight/50 relative">
+          <div id="messages-container">
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state">
+              <div class="text-6xl" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));">📬</div>
+              <h2 class="font-serif text-vintage-brass text-xl mt-4">Hòm thư đang trống</h2>
+              <p class="text-vintage-textMuted font-serif italic">Đang chờ những lá thư tay được gửi đến...</p>
+            </div>
+          </div>
+        </div>
 
+      </div>
+
+      <!-- ==================== CỘT PHẢI: BIỂN HIỆU & QR ==================== -->
+      <div id="right-panel" class="right-panel flex-shrink-0 w-80 p-8 pl-4 flex flex-col gap-6">
+
+        <!-- Panel QR (Khung Tranh) -->
+        <div id="qr-panel" class="vintage-panel collapsible flex-1 flex flex-col items-center justify-center p-6">
+          <h3 class="engraved-text text-sm mb-6">Gửi Thư Tại Đây</h3>
+          <div class="qr-image-wrapper" id="qr-wrapper" title="Click để phóng to">
+            <img id="qr-img" src="extended.svg" alt="QR Code" width="180" height="180" style="display: block;" />
+          </div>
+          <p class="font-serif text-vintage-textMuted italic text-xs mt-6 text-center">
+            "Quét mã bằng điện thoại để thả thư vào hòm"
+          </p>
+        </div>
+
+        <!-- Panel Thông Số (Biển Đồng) -->
+        <div id="stats-panel" class="vintage-panel collapsible p-6">
+          <h3 class="engraved-text text-xs mb-5 text-center border-b border-vintage-woodLight/30 pb-3">
+            Thông Tin Trạm
+          </h3>
+          <div class="space-y-4 font-serif">
+            <div class="flex items-center justify-between">
+              <span class="text-vintage-textMuted text-sm">Tổng số thư:</span>
+              <span class="text-vintage-brassLight font-bold" id="stat-total">0</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-vintage-textMuted text-sm">Người giữ hòm:</span>
+              <span class="text-vintage-brass font-medium text-sm">Quản Trị Viên</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-vintage-textMuted text-sm">Trạng thái:</span>
+              <span class="text-vintage-green font-bold text-sm italic">Đang Mở</span>
+            </div>
+          </div>
+        </div>
 
       </div>
     </div>
 
-    <!-- ==================== QR FULLSCREEN MODAL ==================== -->
+    <!-- Modal Phóng To QR -->
     <div id="qr-modal">
       <img src="extended.svg" alt="QR Code Fullscreen" />
-      <p>Nhấn phím ESC hoặc click bất kỳ đâu để đóng</p>
     </div>
 
     <!-- ====================================================
-         JAVASCRIPT: Long Polling để lấy tin nhắn mới
+         JAVASCRIPT
          ==================================================== -->
     <script>
-      // ---- Cấu hình ----
-      const POLLING_INTERVAL_MS = 1000;   // Cứ 1 giây gọi API một lần
-      const NEW_MESSAGE_HIGHLIGHT_MS = 8000; // Giữ badge "MỚI" trong 8 giây
-      const API_ENDPOINT = "/functions/get"; // Endpoint lấy tin nhắn
+      const POLLING_INTERVAL_MS = 1000;
+      const NEW_MESSAGE_HIGHLIGHT_MS = 8000;
+      const API_ENDPOINT = "/functions/get";
 
-      // ---- State của ứng dụng ----
-      // Dùng Set để lưu các timestamp đã hiển thị, tránh trùng lặp tin nhắn
       const displayedTimestamps = new Set();
       let totalMessageCount = 0;
-      let isInitialLoad = true; // Tránh đọc tất cả tin cũ khi vừa load trang
-      let voiceEnabled = false; // Trạng thái AI TTS
+      let isInitialLoad = true;
+      let voiceEnabled = false;
 
-      // ---- Hàm Đọc Tin Nhắn (Text to Speech) ----
       function speakText(text) {
         if (!voiceEnabled || !window.speechSynthesis) return;
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "vi-VN"; // Giọng Tiếng Việt
-        utterance.rate = 0.85; // Tốc độ (chậm lại một chút để dễ nghe hơn)
-        utterance.pitch = 1.0; // Độ cao
+        utterance.lang = "vi-VN";
+        utterance.rate = 0.85;
         window.speechSynthesis.speak(utterance);
       }
 
-      // ---- Lấy các phần tử DOM ----
       const messagesContainer = document.getElementById("messages-container");
       const emptyState = document.getElementById("empty-state");
       const lastUpdatedEl = document.getElementById("last-updated");
       const messageCountEl = document.getElementById("message-count");
       const statTotalEl = document.getElementById("stat-total");
 
-      // ---- Hàm định dạng thời gian tương đối ----
-      // Hiển thị "vừa xong", "3 giây trước", "2 phút trước", v.v.
       function formatRelativeTime(timestamp) {
-        const now = Date.now();
-        const diffMs = now - timestamp;
-        const diffSeconds = Math.floor(diffMs / 1000);
-
+        const diffSeconds = Math.floor((Date.now() - timestamp) / 1000);
         if (diffSeconds < 5) return "Vừa xong";
         if (diffSeconds < 60) return `${diffSeconds} giây trước`;
-
         const diffMinutes = Math.floor(diffSeconds / 60);
         if (diffMinutes < 60) return `${diffMinutes} phút trước`;
-
         const diffHours = Math.floor(diffMinutes / 60);
         return `${diffHours} giờ trước`;
       }
 
-      // ---- Hàm tạo một card tin nhắn mới ----
       function createMessageCard(message, isNew) {
         const card = document.createElement("div");
-        card.className = "message-card"; // Animation sẽ được add sau
-        card.dataset.timestamp = message.timestamp; // Lưu timestamp để update time sau
+        card.className = "message-card";
+        card.dataset.timestamp = message.timestamp;
 
-        // Nội dung card
         card.innerHTML = `
-          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px;">
-            <!-- Nội dung tin nhắn (chiếm hầu hết chiều ngang) -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
             <p style="
-              color: #e2e8f0;
-              font-size: 17px;
-              font-weight: 500;
-              line-height: 1.6;
-              flex: 1;
+              font-family: 'Lora', serif;
+              font-size: 18px;
+              line-height: 1.7;
+              color: #2c2c2c;
               margin: 0;
               word-break: break-word;
+              flex: 1;
             ">${escapeHtml(message.content)}</p>
-
-            <!-- Badge "MỚI" chỉ hiển thị với tin nhắn mới -->
-            ${isNew ? '<span class="badge-new">Mới</span>' : ""}
+            ${isNew ? '<div class="badge-new ml-4">Thư Mới</div>' : ""}
           </div>
-
-          <!-- Footer card: thời gian -->
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <span class="msg-time" style="color: #64748b; font-size: 13px; font-weight: 400;">
-              ${formatRelativeTime(message.timestamp)}
+          <div style="display: flex; justify-content: flex-end; border-top: 1px solid #e8e4d9; padding-top: 12px;">
+            <span class="msg-time" style="font-family: 'Inter', sans-serif; font-size: 12px; color: #8c8c8c; font-style: italic;">
+              Viết lúc: ${formatRelativeTime(message.timestamp)}
             </span>
           </div>
         `;
-
         return card;
       }
 
-      // ---- Hàm thoát ký tự đặc biệt HTML để ngăn XSS ----
       function escapeHtml(text) {
         const div = document.createElement("div");
         div.appendChild(document.createTextNode(text));
         return div.innerHTML;
       }
 
-      // ---- Hàm cập nhật tất cả thời gian tương đối trên các card ----
       function updateRelativeTimes() {
-        const timeEls = messagesContainer.querySelectorAll(".msg-time");
-        timeEls.forEach((el) => {
+        document.querySelectorAll(".msg-time").forEach((el) => {
           const card = el.closest(".message-card");
           if (card && card.dataset.timestamp) {
-            el.textContent = formatRelativeTime(Number(card.dataset.timestamp));
+            el.textContent = "Viết lúc: " + formatRelativeTime(Number(card.dataset.timestamp));
           }
         });
       }
 
-      // ---- Hàm cập nhật số đếm tin nhắn trên UI ----
       function updateCountDisplay(count) {
         messageCountEl.textContent = count;
         statTotalEl.textContent = count;
       }
 
-      // ---- Hàm chính: Lấy tin nhắn từ API và cập nhật UI ----
       async function fetchAndUpdateMessages() {
         try {
-          const response = await fetch(API_ENDPOINT, {
-            cache: "no-store", // Không dùng cache, luôn lấy dữ liệu mới nhất
-          });
-
-          // Kiểm tra response có hợp lệ không
-          if (!response.ok) {
-            console.error("API trả về lỗi:", response.status);
-            return;
-          }
-
+          const response = await fetch(API_ENDPOINT, { cache: "no-store" });
+          if (!response.ok) return;
           const messages = await response.json();
+          if (!Array.isArray(messages)) return;
 
-          // Kiểm tra messages có phải mảng không
-          if (!Array.isArray(messages)) {
-            console.error("Dữ liệu API không hợp lệ:", messages);
-            return;
-          }
-
-          // Ẩn/hiện trạng thái rỗng
           if (messages.length === 0) {
             emptyState.style.display = "flex";
           } else {
             emptyState.style.display = "none";
           }
 
-          // Đếm số tin nhắn mới trong batch này (để biết có render không)
-          let newMessagesAdded = 0;
-
-          // Duyệt qua mảng tin nhắn từ API (đã sắp xếp mới nhất lên đầu từ server)
-          // Để hiển thị cũ lên trên, mới lên dưới trong feed → ta đảo ngược và prepend
-          // Thực ra ta sẽ insert theo thứ tự: mỗi tin mới sẽ được thêm vào ĐẦU container
-
-          // Tạo mảng tin nhắn chưa được hiển thị
-          const newMessages = messages.filter(
-            (msg) => msg && msg.timestamp && !displayedTimestamps.has(msg.timestamp)
-          );
+          const newMessages = messages.filter(msg => msg && msg.timestamp && !displayedTimestamps.has(msg.timestamp));
 
           if (newMessages.length > 0) {
-            // Tin nhắn mới nhất (index 0 sau khi sort desc) sẽ ở trên cùng
-            // Ta thêm từ cuối mảng lên đầu để đảm bảo tin mới nhất ở trên
-            // newMessages đã sắp xếp desc (mới nhất index 0), nên ta thêm từ cuối lên trước
             for (let i = newMessages.length - 1; i >= 0; i--) {
               const msg = newMessages[i];
-
-              // Đánh dấu là đã hiển thị để lần sau không thêm lại
               displayedTimestamps.add(msg.timestamp);
               totalMessageCount++;
 
-              // Tạo card với badge "MỚI"
               const card = createMessageCard(msg, true);
+              if (!isInitialLoad && voiceEnabled) speakText(msg.content);
 
-              // Đọc tin nhắn nếu không phải lúc mới load và đang bật Voice
-              if (!isInitialLoad && voiceEnabled) {
-                speakText(msg.content);
-              }
-
-              // Chèn card vào ĐẦU container (trước card cũ nhất nếu có, hoặc append)
               const firstCard = messagesContainer.querySelector(".message-card");
               if (firstCard) {
-                // Đã có card khác → chèn trước card đầu tiên
                 messagesContainer.insertBefore(card, firstCard);
               } else {
-                // Chưa có card nào → append vào cuối container (sau empty-state)
                 messagesContainer.appendChild(card);
               }
 
-              // Kích hoạt animation sau 1 frame (để CSS transition hoạt động)
-              requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                  card.classList.add("animate-slide");
-                });
-              });
+              requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add("animate-slide")));
 
-              // Tự động xóa badge "MỚI" sau một khoảng thời gian
               const badge = card.querySelector(".badge-new");
               if (badge) {
                 setTimeout(() => {
-                  badge.style.transition = "opacity 0.5s ease";
+                  badge.style.transition = "opacity 1s ease";
                   badge.style.opacity = "0";
-                  setTimeout(() => badge.remove(), 500);
+                  setTimeout(() => badge.remove(), 1000);
                 }, NEW_MESSAGE_HIGHLIGHT_MS);
               }
-
-              newMessagesAdded++;
             }
           }
 
-          // Xong lần load đầu tiên
           isInitialLoad = false;
-
-          // Cập nhật số đếm tổng
           updateCountDisplay(totalMessageCount);
-
-          // Cập nhật thời gian lần cập nhật cuối
+          
           const now = new Date();
-          lastUpdatedEl.textContent = `Cập nhật lúc ${now.getHours().toString().padStart(2,"0")}:${now.getMinutes().toString().padStart(2,"0")}:${now.getSeconds().toString().padStart(2,"0")}`;
-
+          lastUpdatedEl.textContent = `Kiểm tra hòm thư: ${now.getHours().toString().padStart(2,"0")}:${now.getMinutes().toString().padStart(2,"0")}:${now.getSeconds().toString().padStart(2,"0")}`;
         } catch (error) {
-          // Không hiển thị lỗi ầm ĩ, chỉ log để debug
-          console.error("Lỗi khi lấy tin nhắn:", error);
-          lastUpdatedEl.textContent = "Lỗi kết nối – Đang thử lại...";
+          lastUpdatedEl.textContent = "Hòm thư đang kẹt...";
         }
       }
 
-      // ---- Khởi động ứng dụng ----
-      // Gọi ngay lần đầu khi tải trang
       fetchAndUpdateMessages();
-
-      // Long Polling: gọi lại mỗi 3 giây
       setInterval(fetchAndUpdateMessages, POLLING_INTERVAL_MS);
-
-      // Cập nhật thời gian tương đối mỗi 15 giây (không cần quá thường xuyên)
       setInterval(updateRelativeTimes, 15000);
 
-      // ====================================================
-      // LOGIC TƯƠNG TÁC UI (Toggles & Modal)
-      // ====================================================
+      // ---- UI Logic ----
       const btnToggleQr = document.getElementById("btn-toggle-qr");
       const btnToggleStats = document.getElementById("btn-toggle-stats");
       const btnToggleVoice = document.getElementById("btn-toggle-voice");
@@ -770,7 +485,6 @@
       const qrPanel = document.getElementById("qr-panel");
       const statsPanel = document.getElementById("stats-panel");
       const rightPanel = document.getElementById("right-panel");
-
       const qrWrapper = document.getElementById("qr-wrapper");
       const qrModal = document.getElementById("qr-modal");
 
@@ -778,122 +492,77 @@
       let statsVisible = true;
 
       function updateRightPanelState() {
-        if (!qrVisible && !statsVisible) {
-          rightPanel.classList.add("hidden-panel");
-        } else {
-          rightPanel.classList.remove("hidden-panel");
-        }
+        if (!qrVisible && !statsVisible) rightPanel.classList.add("hidden-panel");
+        else rightPanel.classList.remove("hidden-panel");
       }
 
       function toggleQR() {
         qrVisible = !qrVisible;
-        if (qrVisible) {
-          qrPanel.classList.remove("collapsed");
-          btnToggleQr.classList.add("active");
-        } else {
-          qrPanel.classList.add("collapsed");
-          btnToggleQr.classList.remove("active");
-        }
+        qrPanel.classList.toggle("collapsed", !qrVisible);
+        btnToggleQr.classList.toggle("active", qrVisible);
         updateRightPanelState();
       }
 
       function toggleStats() {
         statsVisible = !statsVisible;
-        if (statsVisible) {
-          statsPanel.classList.remove("collapsed");
-          btnToggleStats.classList.add("active");
-        } else {
-          statsPanel.classList.add("collapsed");
-          btnToggleStats.classList.remove("active");
-        }
+        statsPanel.classList.toggle("collapsed", !statsVisible);
+        btnToggleStats.classList.toggle("active", statsVisible);
         updateRightPanelState();
       }
 
       function toggleVoice() {
         voiceEnabled = !voiceEnabled;
+        btnToggleVoice.classList.toggle("active", voiceEnabled);
         if (voiceEnabled) {
-          btnToggleVoice.classList.add("active");
-          btnToggleVoice.textContent = "🔊 Đang đọc";
-          // Mẹo: Speak 1 chuỗi rỗng để kích hoạt audio context ngay khi user click
-          const unlockAudio = new SpeechSynthesisUtterance("");
-          window.speechSynthesis.speak(unlockAudio);
+          btnToggleVoice.textContent = "🔊 Đang đọc thư";
+          window.speechSynthesis.speak(new SpeechSynthesisUtterance(""));
         } else {
-          btnToggleVoice.classList.remove("active");
-          btnToggleVoice.textContent = "🔈 Đọc";
-          window.speechSynthesis.cancel(); // Tắt luôn nếu đang đọc
+          btnToggleVoice.textContent = "🔈 Đọc thư";
+          window.speechSynthesis.cancel();
         }
       }
 
       async function clearAllMessages() {
-        if (!confirm("Bạn có chắc chắn muốn xóa TOÀN BỘ tin nhắn không? Hành động này không thể hoàn tác.")) {
-          return;
-        }
-
+        if (!confirm("Hành động này sẽ đốt sạch mọi lá thư trong hòm. Bạn có chắc không?")) return;
+        
         const originalText = btnClearAll.innerHTML;
-        btnClearAll.innerHTML = "⏳ Đang xóa...";
+        btnClearAll.innerHTML = "⏳ Đang mồi lửa...";
         btnClearAll.disabled = true;
 
         try {
-          const response = await fetch("/functions/clear", {
-            method: "POST"
-          });
-          
-          if (response.ok) {
-            // Xóa thành công trên server
-            messagesContainer.innerHTML = ""; // Xóa sạch giao diện hiện tại
-            displayedTimestamps.clear(); // Reset lịch sử
+          const res = await fetch("/functions/clear", { method: "POST" });
+          if (res.ok) {
+            messagesContainer.innerHTML = "";
+            displayedTimestamps.clear();
             totalMessageCount = 0;
             updateCountDisplay(0);
-            
-            // Xóa rỗng để hiện lại Empty State
-            const emptyState = document.getElementById("empty-state");
             if (emptyState) {
               messagesContainer.appendChild(emptyState);
               emptyState.style.display = "flex";
             }
-          } else {
-            alert("Lỗi khi xóa tin nhắn. Vui lòng thử lại.");
-          }
-        } catch (error) {
-          console.error("Lỗi clear API:", error);
-          alert("Lỗi mạng. Không thể kết nối tới máy chủ.");
+          } else alert("Lỗi khi đốt thư!");
+        } catch (e) {
+          alert("Mất kết nối!");
         } finally {
           btnClearAll.innerHTML = originalText;
           btnClearAll.disabled = false;
         }
       }
 
-      // Xử lý nút bấm trên UI
       btnToggleQr.addEventListener("click", toggleQR);
       btnToggleStats.addEventListener("click", toggleStats);
       btnToggleVoice.addEventListener("click", toggleVoice);
       if (btnClearAll) btnClearAll.addEventListener("click", clearAllMessages);
 
-      // Xử lý phóng to QR
-      qrWrapper.addEventListener("click", () => {
-        qrModal.classList.add("open");
-      });
-
-      // Xử lý đóng QR (click hoặc phím)
-      qrModal.addEventListener("click", () => {
-        qrModal.classList.remove("open");
-      });
-
+      qrWrapper.addEventListener("click", () => qrModal.classList.add("open"));
+      qrModal.addEventListener("click", () => qrModal.classList.remove("open"));
       document.addEventListener("keydown", (e) => {
-        // Nếu modal QR đang mở, ưu tiên phím ESC để đóng
-        if (qrModal.classList.contains("open")) {
-          if (e.key === "Escape") qrModal.classList.remove("open");
-          return;
-        }
-
-        // Bỏ qua nếu user đang gõ (ở đây ko có ô input nhưng phòng xa)
+        if (e.key === "Escape") qrModal.classList.remove("open");
         if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
-
-        // Phím tắt Q/S/A
-        const key = e.key.toLowerCase();
-        if (key === "q") toggleQR();
-        if (key === "s") toggleStats();
-        if (key === "a") toggleVoice();
+        const k = e.key.toLowerCase();
+        if (k === "q") toggleQR();
+        if (k === "s") toggleStats();
+        if (k === "a") toggleVoice();
       });
     </script>
   </body>
