@@ -343,15 +343,31 @@
 
         try {
           // Gửi POST request lên Cloudflare Pages Function
-          const response = await fetch("/functions/send", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ content: content }),
-          });
+          let response;
+          try {
+            response = await fetch("/functions/send", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ content: content }),
+            });
+          } catch (fetchError) {
+            // Lỗi mạng thực sự (offline, DNS fail, v.v.)
+            console.error("Lỗi fetch:", fetchError);
+            showError("Không thể kết nối đến server. Kiểm tra kết nối mạng.");
+            return;
+          }
 
-          const result = await response.json();
+          // Thử parse JSON, nếu không được thì hiển thị status code để debug
+          let result;
+          try {
+            result = await response.json();
+          } catch (jsonError) {
+            console.error("Response không phải JSON. HTTP Status:", response.status);
+            showError(`Lỗi server (HTTP ${response.status}). Mở F12 → Console để xem chi tiết.`);
+            return;
+          }
 
           if (response.ok && result.success) {
             // Gửi thành công: xóa textarea và hiển thị thông báo
@@ -361,13 +377,13 @@
             showSuccess();
           } else {
             // Server trả về lỗi có thông báo cụ thể
-            showError(result.error || "Gửi thất bại. Vui lòng thử lại.");
+            showError(result.error || `Gửi thất bại (HTTP ${response.status}). Vui lòng thử lại.`);
           }
-        } catch (networkError) {
-          // Lỗi mạng hoặc server không phản hồi
-          console.error("Lỗi gửi tin nhắn:", networkError);
-          showError("Không thể kết nối đến server. Kiểm tra kết nối mạng và thử lại.");
-        } finally {
+        } catch (unexpectedError) {
+          console.error("Lỗi không mong đợi:", unexpectedError);
+          showError("Lỗi không xác định: " + unexpectedError.message);
+        }
+ finally {
           // Luôn tắt trạng thái loading dù thành công hay thất bại
           setLoading(false);
         }
