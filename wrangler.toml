@@ -5,7 +5,7 @@
 #   - KV binding thật được cấu hình trong Dashboard: Pages → Settings → Functions → KV namespace bindings
 #   - Để test LOCAL: npx wrangler pages dev . --kv MESSAGES_KV
 
-name = "chiec-hop-bi-mat"
+name = "cloudfaregk"
 compatibility_date = "2024-01-01"
 
 # Thư mục chứa static assets (index.html, dashboard.html) để Cloudflare Pages deploy
@@ -15,4 +15,4 @@ pages_build_output_dir = "."
 # Khi deploy lên Pages thật, binding được cấu hình qua Cloudflare Dashboard
 [[kv_namespaces]]
 binding = "MESSAGES_KV"
-id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"  # Thay bằng KV Namespace ID thật từ Cloudflare Dashboard
+id = "20d13b40d2324751807f7433dd6090d7"
