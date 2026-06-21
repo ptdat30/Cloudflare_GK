@@ -439,6 +439,7 @@
             <div class="flex items-center gap-2">
               <button id="btn-toggle-qr" class="toggle-btn active" title="Ẩn/hiện QR (phím Q)">QR</button>
               <button id="btn-toggle-stats" class="toggle-btn active" title="Ẩn/hiện thống kê (phím S)">Stat</button>
+              <button id="btn-toggle-voice" class="toggle-btn" title="Bật/Tắt AI Đọc (phím A)">🔈 Đọc</button>
               <span class="text-dash-textMuted text-sm" id="last-updated">Đang tải...</span>
               <div class="count-badge" id="message-count">0</div>
             </div>
@@ -541,6 +542,18 @@
       // Dùng Set để lưu các timestamp đã hiển thị, tránh trùng lặp tin nhắn
       const displayedTimestamps = new Set();
       let totalMessageCount = 0;
+      let isInitialLoad = true; // Tránh đọc tất cả tin cũ khi vừa load trang
+      let voiceEnabled = false; // Trạng thái AI TTS
+
+      // ---- Hàm Đọc Tin Nhắn (Text to Speech) ----
+      function speakText(text) {
+        if (!voiceEnabled || !window.speechSynthesis) return;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "vi-VN"; // Giọng Tiếng Việt
+        utterance.rate = 1.0; // Tốc độ
+        utterance.pitch = 1.0; // Độ cao
+        window.speechSynthesis.speak(utterance);
+      }
 
       // ---- Lấy các phần tử DOM ----
       const messagesContainer = document.getElementById("messages-container");
@@ -682,6 +695,11 @@
               // Tạo card với badge "MỚI"
               const card = createMessageCard(msg, true);
 
+              // Đọc tin nhắn nếu không phải lúc mới load và đang bật Voice
+              if (!isInitialLoad && voiceEnabled) {
+                speakText(msg.content);
+              }
+
               // Chèn card vào ĐẦU container (trước card cũ nhất nếu có, hoặc append)
               const firstCard = messagesContainer.querySelector(".message-card");
               if (firstCard) {
@@ -713,6 +731,9 @@
             }
           }
 
+          // Xong lần load đầu tiên
+          isInitialLoad = false;
+
           // Cập nhật số đếm tổng
           updateCountDisplay(totalMessageCount);
 
@@ -742,6 +763,7 @@
       // ====================================================
       const btnToggleQr = document.getElementById("btn-toggle-qr");
       const btnToggleStats = document.getElementById("btn-toggle-stats");
+      const btnToggleVoice = document.getElementById("btn-toggle-voice");
       const qrPanel = document.getElementById("qr-panel");
       const statsPanel = document.getElementById("stats-panel");
       const rightPanel = document.getElementById("right-panel");
@@ -784,9 +806,25 @@
         updateRightPanelState();
       }
 
+      function toggleVoice() {
+        voiceEnabled = !voiceEnabled;
+        if (voiceEnabled) {
+          btnToggleVoice.classList.add("active");
+          btnToggleVoice.textContent = "🔊 Đang đọc";
+          // Mẹo: Speak 1 chuỗi rỗng để kích hoạt audio context ngay khi user click
+          const unlockAudio = new SpeechSynthesisUtterance("");
+          window.speechSynthesis.speak(unlockAudio);
+        } else {
+          btnToggleVoice.classList.remove("active");
+          btnToggleVoice.textContent = "🔈 Đọc";
+          window.speechSynthesis.cancel(); // Tắt luôn nếu đang đọc
+        }
+      }
+
       // Xử lý nút bấm trên UI
       btnToggleQr.addEventListener("click", toggleQR);
       btnToggleStats.addEventListener("click", toggleStats);
+      btnToggleVoice.addEventListener("click", toggleVoice);
 
       // Xử lý phóng to QR
       qrWrapper.addEventListener("click", () => {
@@ -808,10 +846,11 @@
         // Bỏ qua nếu user đang gõ (ở đây ko có ô input nhưng phòng xa)
         if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
 
-        // Phím tắt Q/S
+        // Phím tắt Q/S/A
         const key = e.key.toLowerCase();
         if (key === "q") toggleQR();
         if (key === "s") toggleStats();
+        if (key === "a") toggleVoice();
       });
     </script>
   </body>
